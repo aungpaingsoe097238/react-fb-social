@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import PostCreate from "./pages/posts/Create";
 import PostEdit from "./pages/posts/Edit";
+import PostDetail from "./pages/posts/Detail";
 import NavBar from "./components/NavBar";
 import { addUser  } from './features/services/authSlice'
 import { useDispatch, useSelector } from "react-redux";
@@ -40,6 +41,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/post-create" element={<PostCreate />} />
+        <Route path="/post/:id" element={<PostDetail />} />
         <Route path="/post-edit/:id" element={<PostEdit />} />
       </Routes>
     </div>

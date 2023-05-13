@@ -2,20 +2,39 @@ import React from "react";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { FaComment } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
-import Tzuyu from "../assets/demo/download (1).png"
+import Tzuyu from "../assets/demo/download (1).png";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+// import required modules
+import { Pagination, Autoplay, Navigation } from "swiper";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addPost } from "../features/services/postSlice";
 
 const Post = ({ post }) => {
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const excerpt = (text) => {
     const limit = 100;
-    if(text.length > 100){
-      return text.substring(0,limit)+'....';
+    if (text.length > 100) {
+      return text.substring(0, limit) + "....";
     }
     return text;
+  };
+
+  const handleGoDetail = (post) => {
+    navigate(`post/${post.id}`);
+    dispatch( addPost({ post : post }) );
   }
 
   return (
-    <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
+    <div className=" my-3 w-[50%] mx-auto text-slate-700 "  >
       <div className=" flex justify-between items-center ">
         <div className=" mb-2 flex justify-center items-center gap-1 ">
           <img
@@ -24,8 +43,8 @@ const Post = ({ post }) => {
             alt=""
           />
           <div className=" flex flex-col justify-center ">
-            <span className=" font-bold text-sm">{ post.email }</span>
-            <span className=" text-xs">{ post.timestamp }</span>
+            <span className=" font-bold text-sm">{post.email}</span>
+            <span className=" text-xs">{post.timestamp}</span>
           </div>
         </div>
         <div className=" p-2 active:bg-slate-200 rounded-full cursor-pointer  ">
@@ -33,15 +52,31 @@ const Post = ({ post }) => {
         </div>
       </div>
       <div>
-        <img
-          src={post.photos[0]}
-          className=" w-full object-cover h-[500px] border border-slate-200 "
-          alt=""
-        />
+        <Swiper
+          slidesPerView={1}
+          pagination={{
+            type: "fraction",
+          }}
+          navigation={true}
+          modules={[Navigation, Pagination]}
+          className="mySwiper"
+        >
+          {post?.photos?.map((photo, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <img
+                  src={photo}
+                  className=" w-full object-cover h-[500px] border border-slate-200 cursor-pointer "
+                  alt=""
+                  onClick={ () => handleGoDetail(post)}
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       </div>
       <div className=" flex items-center justify-between my-2 text-2xl  ">
         <div className=" flex gap-1 justify-center items-center ">
-
           <div className=" flex justify-center items-center gap-1">
             <AiFillLike className="active:bg-slate-200 rounded-full cursor-pointer" />
             <span className=" text-sm ">5likes</span>
@@ -57,11 +92,11 @@ const Post = ({ post }) => {
           <FaComment className="active:bg-slate-200 rounded-full cursor-pointer" />
           <span className=" text-sm ">5comments</span>
         </div>
-
       </div>
-      <p className="text-[15px]">
-        { excerpt(post.text) }
-      </p>
+        
+
+        <p className="text-[15px]">{excerpt(post.text)}</p>
+
     </div>
   );
 };

@@ -8,9 +8,11 @@ import photoSlice, { addPhotos } from "../../features/services/photoSlice";
 import Spinner from "../../components/Spinner";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from "react-router";
 
 const Create = () => {
   const uuid = uuidv4();;
+  const navigate = useNavigate();
   const database = getDatabase(app);
   const [text, setText] = useState("");
   const [spinner, setSpinner] = useState(true);
@@ -33,9 +35,10 @@ const Create = () => {
     const now = new Date();
     const dateTimeString = now.toLocaleString();
     const newPost = {
+      id: uuid,
       text: text,
       timestamp: dateTimeString,
-      uid: userSelector.uid,
+      userUid: userSelector.uid,
       email: userSelector.email,
       photos: photoSelector,
     };
@@ -45,6 +48,7 @@ const Create = () => {
         Alert('success', 'New Post Create Successfully!')
         setText("")
         dispatch(addPhotos({ photoUrls : [] }));
+        navigate('/')
       })
       .catch((error) => {
         setSpinner(false);

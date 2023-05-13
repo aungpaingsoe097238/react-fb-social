@@ -10,3 +10,46 @@
 .primary-btn-disable {
     @apply bg-sky-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed;
 }
+
+/* Style the navigation buttons */
+.swiper-button-prev,
+.swiper-button-next {
+    position: absolute;
+    top: var(--swiper-navigation-top-offset,50%);
+    width: calc(var(--swiper-navigation-size)/ 44 * 27);
+    height: var(--swiper-navigation-size);
+    margin-top: calc(0px - (var(--swiper-navigation-size)/ 2));
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155 !important;
+}
+
+.swiper-button-next:after, .swiper-button-prev:after {
+    font-family: swiper-icons;
+    font-size: 20px !important;
+    font-weight: bolder !important;
+    text-transform: none!important;
+    letter-spacing: 0;
+    font-variant: initial;
+    line-height: 1;
+    background-color: #e2e8f0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+}
+
+/* Style the previous button */
+.swiper-button-prev {
+  left: 10px;
+}
+
+/* Style the next button */
+.swiper-button-next {
+  right: 10px;
+}
