@@ -1,4 +1,7 @@
 import { initializeApp } from "firebase/app";
+import { getFirestore , collection } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAKS1uKR-Vdhg_poUn3Sz47h_R8HV84Z8w",
@@ -10,6 +13,6 @@ const firebaseConfig = {
   databaseURL: "https://fb-testing-4d315-default-rtdb.firebaseio.com"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 export default app;
