@@ -1,10 +1,19 @@
 import React from "react";
-import Tzuyu from "../assets/demo/download.png";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { FaComment } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
+import Tzuyu from "../assets/demo/download (1).png"
 
-const Post = () => {
+const Post = ({ post }) => {
+
+  const excerpt = (text) => {
+    const limit = 100;
+    if(text.length > 100){
+      return text.substring(0,limit)+'....';
+    }
+    return text;
+  }
+
   return (
     <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
       <div className=" flex justify-between items-center ">
@@ -15,8 +24,8 @@ const Post = () => {
             alt=""
           />
           <div className=" flex flex-col justify-center ">
-            <span className=" font-bold">Tzuyu</span>
-            <span className=" text-xs">1 min ago</span>
+            <span className=" font-bold text-sm">{ post.email }</span>
+            <span className=" text-xs">{ post.timestamp }</span>
           </div>
         </div>
         <div className=" p-2 active:bg-slate-200 rounded-full cursor-pointer  ">
@@ -25,7 +34,7 @@ const Post = () => {
       </div>
       <div>
         <img
-          src={Tzuyu}
+          src={post.photos[0]}
           className=" w-full object-cover h-[500px] border border-slate-200 "
           alt=""
         />
@@ -51,8 +60,7 @@ const Post = () => {
 
       </div>
       <p className="text-[15px]">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic non
-        aspernatur sapiente aliquid deleniti...
+        { excerpt(post.text) }
       </p>
     </div>
   );

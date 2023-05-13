@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import photoSlice, { addPhotos } from "../../features/services/photoSlice";
 import Spinner from "../../components/Spinner";
 import Swal from "sweetalert2";
+import { v4 as uuidv4 } from 'uuid';
 
 const Create = () => {
+  const uuid = uuidv4();;
   const database = getDatabase(app);
   const [text, setText] = useState("");
   const [spinner, setSpinner] = useState(true);
@@ -33,11 +35,11 @@ const Create = () => {
     const newPost = {
       text: text,
       timestamp: dateTimeString,
-      uuid: userSelector.uid,
+      uid: userSelector.uid,
       email: userSelector.email,
       photos: photoSelector,
     };
-    set(ref(database, `posts/${userSelector.uid}+${now}`), newPost)
+    set(ref(database, `posts/post_${uuid}`), newPost)
       .then(() => {
         setSpinner(false);
         Alert('success', 'New Post Create Successfully!')
