@@ -35,7 +35,7 @@ function App() {
   }, []);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto text-slate-700">
       <NavBar/>
       <Routes>
         <Route path="/" element={<Home />} />

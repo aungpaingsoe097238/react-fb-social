@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import app from "../../firebase";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set , push,  } from "firebase/database";
 import { GrAddCircle } from "react-icons/gr";
 import PhotoUpload from "../../components/PhotoUpload";
 import { useDispatch, useSelector } from "react-redux";
 import photoSlice, { addPhotos } from "../../features/services/photoSlice";
 import Spinner from "../../components/Spinner";
 import Swal from "sweetalert2";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router";
+import { addPost } from "../../features/services/postSlice";
 
 const Create = () => {
-  const uuid = uuidv4();;
+  const uuid = uuidv4();
   const navigate = useNavigate();
   const database = getDatabase(app);
   const [text, setText] = useState("");
@@ -21,10 +22,15 @@ const Create = () => {
   const userSelector = useSelector((state) => state?.auth?.user);
 
   useEffect(() => {
+    dispatch(addPost({ post: [] }));
+    dispatch(addPhotos({ photoUrls: [] }));
+  }, []);
+
+  useEffect(() => {
     if ([...photoSelector].length > 0) {
       setSpinner(false);
-    }else{
-      setSpinner(true)
+    } else {
+      setSpinner(true);
     }
   });
 
@@ -32,32 +38,33 @@ const Create = () => {
   const handlePostCreate = (e) => {
     setSpinner(true);
     e.preventDefault();
-    const nowInMilliseconds = Date.now(); 
+    const nowInMilliseconds = Date.now();
     const now = new Date();
     const dateTimeString = now.toLocaleString();
     const newPost = {
-      id: uuid,
+      id: nowInMilliseconds,
       text: text,
       timestamp: dateTimeString,
       userUid: userSelector.uid,
       email: userSelector.email,
       photos: photoSelector,
+      comments: [],
     };
     set(ref(database, `posts/${nowInMilliseconds}`), newPost)
       .then(() => {
         setSpinner(false);
-        Alert('success', 'New Post Create Successfully!')
-        setText("")
-        dispatch(addPhotos({ photoUrls : [] }));
-        navigate('/')
+        Alert("success", "New Post Create Successfully!");
+        setText("");
+        dispatch(addPhotos({ photoUrls: [] }));
+        navigate("/");
       })
       .catch((error) => {
         setSpinner(false);
-        Alert('error', 'Something Was Wrong!')
+        Alert("error", "Something Was Wrong!");
       });
   };
 
-  const Alert = (icon,title) => {
+  const Alert = (icon, title) => {
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -67,12 +74,12 @@ const Create = () => {
       didOpen: (toast) => {
         toast.addEventListener("mouseenter", Swal.stopTimer);
         toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
+      }
     });
 
     Toast.fire({
       icon: icon,
-      title: title,
+      title: title
     });
   };
 
@@ -84,7 +91,7 @@ const Create = () => {
           rows="5"
           placeholder=" type here ... "
           className=" border border-slate-500 rounded-lg w-full p-2 "
-          value={ text }
+          value={text}
           onChange={(e) => setText(e.target.value)}
         ></textarea>
         {/* Image upload here */}

@@ -21,9 +21,7 @@ const PostList = () => {
       setIsLoading(false); // Set isLoading to false if there is no data
     }
   };
-
-  console.log(posts)
-
+  
   useEffect(() => {
     getAllPosts();
   }, []);
@@ -32,6 +30,8 @@ const PostList = () => {
     <div>
       {isLoading ? (
         <>
+          <Loading />
+          <Loading />
           <Loading />
           <Loading />
           <Loading />
