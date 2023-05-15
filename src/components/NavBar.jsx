@@ -6,7 +6,7 @@ const NavBar = () => {
     <div className="  sticky top-0 p-4 rounded shadow bg-white z-10 ">
       <div className=" w-[80%] mx-auto  flex justify-between items-center ">
         <ul>
-          <li>
+          <li className=" font-bold ">
             <Link to={'/'}>
               Social
             </Link>
