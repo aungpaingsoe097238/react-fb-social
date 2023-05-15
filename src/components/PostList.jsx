@@ -22,6 +22,8 @@ const PostList = () => {
     }
   };
 
+  console.log(posts)
+
   useEffect(() => {
     getAllPosts();
   }, []);

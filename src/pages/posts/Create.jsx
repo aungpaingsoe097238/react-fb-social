@@ -32,6 +32,7 @@ const Create = () => {
   const handlePostCreate = (e) => {
     setSpinner(true);
     e.preventDefault();
+    const nowInMilliseconds = Date.now(); 
     const now = new Date();
     const dateTimeString = now.toLocaleString();
     const newPost = {
@@ -42,7 +43,7 @@ const Create = () => {
       email: userSelector.email,
       photos: photoSelector,
     };
-    set(ref(database, `posts/post_${uuid}`), newPost)
+    set(ref(database, `posts/${nowInMilliseconds}`), newPost)
       .then(() => {
         setSpinner(false);
         Alert('success', 'New Post Create Successfully!')
