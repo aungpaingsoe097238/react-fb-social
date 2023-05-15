@@ -7,13 +7,13 @@ import {
   ref,
   set,
   onValue,
-  onChildAdded,
+  onChildAdded
 } from "firebase/database";
 import Login from "./Login";
 import NavBar from "../components/NavBar";
 import { AiOutlinePlus } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { addUser  } from '../features/services/authSlice'
+import { addUser } from "../features/services/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PostList from "../components/PostList";
 
@@ -22,17 +22,17 @@ const Home = () => {
   const database = getDatabase(app);
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
-  const userSelector = useSelector((state) => state?.auth?.user)
+  const userSelector = useSelector((state) => state?.auth?.user);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
         const userData = {
-          'email' : user.email,
-          'uid'   : user.uid
-        }
-        dispatch(addUser({user : userData}));
+          email: user.email,
+          uid: user.uid
+        };
+        dispatch(addUser({ user: userData }));
       } else {
         setUser(null);
       }

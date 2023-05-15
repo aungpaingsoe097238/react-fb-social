@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   AiFillLike,
   AiOutlineLike,
@@ -15,7 +15,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 // import required modules
 import { Pagination, Autoplay, Navigation } from "swiper";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addPost } from "../features/services/postSlice";
@@ -23,6 +22,7 @@ import { addPost } from "../features/services/postSlice";
 const Post = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [commentCount, setCommentCount] = useState(0);
 
   const excerpt = (text) => {
     const limit = 100;
@@ -36,6 +36,10 @@ const Post = ({ post }) => {
     navigate(`post/${post.id}`);
     dispatch(addPost({ post: post }));
   };
+
+  useEffect(() => {
+    setCommentCount(Object.values(post.comments).length);
+  })
 
   return (
     <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
@@ -93,8 +97,8 @@ const Post = ({ post }) => {
         </div>
 
         <div className=" flex justify-center items-center gap-1">
-          <FaRegComment className="active:bg-slate-200 rounded-full cursor-pointer" />
-          <span className=" text-sm ">5comments</span>
+          <FaRegComment className="active:bg-slate-200 rounded-full cursor-pointer" onClick={ () => handleGoDetail(post) } />
+          <span className=" text-sm ">{commentCount} comments</span>
         </div>
       </div>
 
