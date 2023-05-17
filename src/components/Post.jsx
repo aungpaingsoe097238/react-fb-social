@@ -3,7 +3,7 @@ import {
   AiFillLike,
   AiOutlineLike,
   AiFillDislike,
-  AiOutlineDislike,
+  AiOutlineDislike
 } from "react-icons/ai";
 import { FaRegComment, FaComment } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
@@ -16,13 +16,20 @@ import "swiper/css/pagination";
 // import required modules
 import { Pagination, Autoplay, Navigation } from "swiper";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../features/services/postSlice";
+import app from "../firebase";
+import { getDatabase, ref, set, get } from "firebase/database";
 
 const Post = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [commentCount, setCommentCount] = useState(0);
+  const database = getDatabase(app);
+  const nowInMilliseconds = Date.now();
+  const now = new Date();
+  const dateTimeString = now.toLocaleString();
+  const userSelector = useSelector((state) => state?.auth?.user);
 
   const excerpt = (text) => {
     const limit = 100;
@@ -37,9 +44,49 @@ const Post = ({ post }) => {
     dispatch(addPost({ post: post }));
   };
 
+
+  const handleGiveReaction = (post, status) => {
+
+    if(post.reactions == "" ){
+      console.log("null reaction")
+    }
+
+    let reaction = Object.values(post.reactions)[0];
+    if(reaction.email === userSelector.email){
+      console.log("you already give reaction")
+    }else{
+      
+    }
+
+    // if(isReactionEmail === userSelector.email) {
+    //   console.log("same email")
+    // }else {
+    //   console.log("give reaction")
+    // }
+
+    // const newReaction = {
+    //   id: nowInMilliseconds,
+    //   status: status,
+    //   timestamp: dateTimeString,
+    //   userUid: userSelector.uid,
+    //   email: userSelector.email
+    // };
+    // set(
+    //   ref(database, `posts/${post?.id}/reactions/${nowInMilliseconds}`),
+    //   newReaction
+    // )
+    //   .then(() => {
+    //     // setComment("");
+    //     console.log("success");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+  };
+
   useEffect(() => {
     setCommentCount(Object.values(post.comments).length);
-  })
+  });
 
   return (
     <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
@@ -63,7 +110,7 @@ const Post = ({ post }) => {
         <Swiper
           slidesPerView={1}
           pagination={{
-            type: "fraction",
+            type: "fraction"
           }}
           navigation={true}
           modules={[Navigation, Pagination]}
@@ -75,7 +122,7 @@ const Post = ({ post }) => {
                 <img
                   src={photo}
                   className=" w-full object-cover h-[500px] border border-slate-200 cursor-pointer "
-                  onClick={ () => handleGoDetail(post) }
+                  onClick={() => handleGoDetail(post)}
                   alt=""
                 />
               </SwiperSlide>
@@ -86,18 +133,27 @@ const Post = ({ post }) => {
       <div className=" flex items-center justify-between my-2 text-2xl  ">
         <div className=" flex gap-1 justify-center items-center ">
           <div className=" flex justify-center items-center gap-1">
-            <AiOutlineLike className="active:bg-slate-200 rounded-full cursor-pointer" />
+            <AiOutlineLike
+              className="active:bg-slate-200 rounded-full cursor-pointer"
+              onClick={() => handleGiveReaction(post, 1)}
+            />
             <span className=" text-sm ">5likes</span>
           </div>
 
           <div className=" flex justify-center items-center gap-1">
-            <AiOutlineDislike className="active:bg-slate-200 rounded-full cursor-pointer" />
+            <AiOutlineDislike
+              className="active:bg-slate-200 rounded-full cursor-pointer"
+              onClick={() => handleGiveReaction(post, 1)}
+            />
             <span className=" text-sm ">5dislikes</span>
           </div>
         </div>
 
         <div className=" flex justify-center items-center gap-1">
-          <FaRegComment className="active:bg-slate-200 rounded-full cursor-pointer" onClick={ () => handleGoDetail(post) } />
+          <FaRegComment
+            className="active:bg-slate-200 rounded-full cursor-pointer"
+            onClick={() => handleGoDetail(post)}
+          />
           <span className=" text-sm ">{commentCount} comments</span>
         </div>
       </div>
