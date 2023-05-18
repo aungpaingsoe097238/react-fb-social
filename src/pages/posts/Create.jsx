@@ -49,7 +49,6 @@ const Create = () => {
       email: userSelector.email,
       photos: photoSelector,
       comments: "",
-      reactions: ""
     };
     set(ref(database, `posts/${nowInMilliseconds}`), newPost)
       .then(() => {

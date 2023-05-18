@@ -25,11 +25,23 @@ const Post = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [commentCount, setCommentCount] = useState(0);
+  const [reactions, setReactions] = useState([]);
   const database = getDatabase(app);
   const nowInMilliseconds = Date.now();
   const now = new Date();
   const dateTimeString = now.toLocaleString();
   const userSelector = useSelector((state) => state?.auth?.user);
+
+  const getReaction = async () => {
+    const commentRef = ref(database, `posts/${post?.id}/reactions`);
+    const snapshot = await get(commentRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      setReactions(Object.values(data));
+    } else {
+      console.log("No data available");
+    }
+  };
 
   const excerpt = (text) => {
     const limit = 100;
@@ -44,48 +56,49 @@ const Post = ({ post }) => {
     dispatch(addPost({ post: post }));
   };
 
-
   const handleGiveReaction = (post, status) => {
 
-    if(post.reactions == "" ){
-      console.log("null reaction")
+    const isSameEmail = reactions.filter(
+      (reaction) => reaction.email === userSelector.email
+    );
+
+    const isSameStatus = reactions.filter(
+      (reaction) => reaction.status === status
+    );
+
+    if (isSameEmail.length > 0) {
+      sendReactionToFb(`posts/${post?.id}/reactions/${isSameEmail[0]?.id}`, {
+        id: isSameEmail[0]?.id,
+        status: status,
+        timestamp: dateTimeString,
+        userUid: userSelector.uid,
+        email: userSelector.email
+      },"create reaction");
+    } else {
+      sendReactionToFb(`posts/${post?.id}/reactions/${nowInMilliseconds}`, {
+        id: nowInMilliseconds,
+        status: status,
+        timestamp: dateTimeString,
+        userUid: userSelector.uid,
+        email: userSelector.email
+      },"update reaction");
     }
+  };
 
-    let reaction = Object.values(post.reactions)[0];
-    if(reaction.email === userSelector.email){
-      console.log("you already give reaction")
-    }else{
-      
-    }
-
-    // if(isReactionEmail === userSelector.email) {
-    //   console.log("same email")
-    // }else {
-    //   console.log("give reaction")
-    // }
-
-    // const newReaction = {
-    //   id: nowInMilliseconds,
-    //   status: status,
-    //   timestamp: dateTimeString,
-    //   userUid: userSelector.uid,
-    //   email: userSelector.email
-    // };
-    // set(
-    //   ref(database, `posts/${post?.id}/reactions/${nowInMilliseconds}`),
-    //   newReaction
-    // )
-    //   .then(() => {
-    //     // setComment("");
-    //     console.log("success");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+  const sendReactionToFb = (path, data, message) => {
+    set(ref(database, `${path}`), data)
+      .then(() => {
+        console.log(message);
+        getReaction();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
     setCommentCount(Object.values(post.comments).length);
+    getReaction();
   });
 
   return (
@@ -143,7 +156,7 @@ const Post = ({ post }) => {
           <div className=" flex justify-center items-center gap-1">
             <AiOutlineDislike
               className="active:bg-slate-200 rounded-full cursor-pointer"
-              onClick={() => handleGiveReaction(post, 1)}
+              onClick={() => handleGiveReaction(post, 0)}
             />
             <span className=" text-sm ">5dislikes</span>
           </div>
