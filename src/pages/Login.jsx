@@ -4,6 +4,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../features/services/authSlice"
+import Cookies from "js-cookie";
 
 function Login() {
   const auth = getAuth(app);
@@ -23,6 +24,7 @@ function Login() {
             'uid'   : user.uid
           }
           dispatch(addUser(userData));
+          Cookies.set('uid', user.uid)
           navigate('/')
         }
       })
