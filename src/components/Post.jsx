@@ -19,18 +19,21 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../features/services/postSlice";
 import app from "../firebase";
-import { getDatabase, ref, set, get } from "firebase/database";
+import { getDatabase, ref, set, get, remove } from "firebase/database";
 
 const Post = ({ post }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [commentCount, setCommentCount] = useState(0);
   const [reactions, setReactions] = useState([]);
+  const [reactionStatus, setReactionStatus] = useState(0);
   const database = getDatabase(app);
   const nowInMilliseconds = Date.now();
   const now = new Date();
   const dateTimeString = now.toLocaleString();
   const userSelector = useSelector((state) => state?.auth?.user);
+  const [likeReactionCount, setLikeReactionCount] = useState(0);
+  const [DisLikeReactionCount, setDisLikeReactionCount] = useState(0);
 
   const getReaction = async () => {
     const commentRef = ref(database, `posts/${post?.id}/reactions`);
@@ -38,8 +41,18 @@ const Post = ({ post }) => {
     if (snapshot.exists()) {
       const data = snapshot.val();
       setReactions(Object.values(data));
+      const isSameEmail = Object.values(data).filter(
+        (reaction) => reaction.email === userSelector.email
+      );
+      setReactionStatus(isSameEmail[0]?.status);
+      setLikeReactionCount(
+        Object.values(data).filter((reaction) => reaction.status === 1).length
+      );
+      setDisLikeReactionCount(
+        Object.values(data).filter((reaction) => reaction.status === 0).length
+      );
     } else {
-      console.log("No data available");
+      setReactionStatus(3);
     }
   };
 
@@ -57,31 +70,54 @@ const Post = ({ post }) => {
   };
 
   const handleGiveReaction = (post, status) => {
-
     const isSameEmail = reactions.filter(
       (reaction) => reaction.email === userSelector.email
     );
 
     const isSameStatus = reactions.filter(
-      (reaction) => reaction.status === status
+      (reaction) =>
+        reaction.status == status && reaction.email === userSelector.email
     );
 
+    if (isSameStatus.length > 0) {
+      sendReactionToFb(
+        `posts/${post?.id}/reactions/${isSameEmail[0]?.id}`,
+        {
+          id: isSameEmail[0]?.id,
+          status: 3,
+          timestamp: dateTimeString,
+          userUid: userSelector.uid,
+          email: userSelector.email
+        },
+        "create reaction"
+      );
+      return;
+    }
+
     if (isSameEmail.length > 0) {
-      sendReactionToFb(`posts/${post?.id}/reactions/${isSameEmail[0]?.id}`, {
-        id: isSameEmail[0]?.id,
-        status: status,
-        timestamp: dateTimeString,
-        userUid: userSelector.uid,
-        email: userSelector.email
-      },"create reaction");
+      sendReactionToFb(
+        `posts/${post?.id}/reactions/${isSameEmail[0]?.id}`,
+        {
+          id: isSameEmail[0]?.id,
+          status: status,
+          timestamp: dateTimeString,
+          userUid: userSelector.uid,
+          email: userSelector.email
+        },
+        "create reaction"
+      );
     } else {
-      sendReactionToFb(`posts/${post?.id}/reactions/${nowInMilliseconds}`, {
-        id: nowInMilliseconds,
-        status: status,
-        timestamp: dateTimeString,
-        userUid: userSelector.uid,
-        email: userSelector.email
-      },"update reaction");
+      sendReactionToFb(
+        `posts/${post?.id}/reactions/${nowInMilliseconds}`,
+        {
+          id: nowInMilliseconds,
+          status: status,
+          timestamp: dateTimeString,
+          userUid: userSelector.uid,
+          email: userSelector.email
+        },
+        "update reaction"
+      );
     }
   };
 
@@ -99,7 +135,7 @@ const Post = ({ post }) => {
   useEffect(() => {
     setCommentCount(Object.values(post.comments).length);
     getReaction();
-  });
+  }, [setReactions]);
 
   return (
     <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
@@ -146,19 +182,33 @@ const Post = ({ post }) => {
       <div className=" flex items-center justify-between my-2 text-2xl  ">
         <div className=" flex gap-1 justify-center items-center ">
           <div className=" flex justify-center items-center gap-1">
-            <AiOutlineLike
-              className="active:bg-slate-200 rounded-full cursor-pointer"
-              onClick={() => handleGiveReaction(post, 1)}
-            />
-            <span className=" text-sm ">5likes</span>
+            {reactionStatus === 1 ? (
+              <AiFillLike
+                className="active:bg-slate-200 rounded-full cursor-pointer"
+                onClick={() => handleGiveReaction(post, 1)}
+              />
+            ) : (
+              <AiOutlineLike
+                className="active:bg-slate-200 rounded-full cursor-pointer"
+                onClick={() => handleGiveReaction(post, 1)}
+              />
+            )}
+            <span className=" text-sm "> {likeReactionCount} likes</span>
           </div>
 
           <div className=" flex justify-center items-center gap-1">
-            <AiOutlineDislike
-              className="active:bg-slate-200 rounded-full cursor-pointer"
-              onClick={() => handleGiveReaction(post, 0)}
-            />
-            <span className=" text-sm ">5dislikes</span>
+            {reactionStatus === 0 ? (
+              <AiFillDislike
+                className="active:bg-slate-200 rounded-full cursor-pointer"
+                onClick={() => handleGiveReaction(post, 0)}
+              />
+            ) : (
+              <AiOutlineDislike
+                className="active:bg-slate-200 rounded-full cursor-pointer"
+                onClick={() => handleGiveReaction(post, 0)}
+              />
+            )}
+            <span className=" text-sm ">{DisLikeReactionCount} dislikes</span>
           </div>
         </div>
 

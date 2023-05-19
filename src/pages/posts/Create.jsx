@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import app from "../../firebase";
-import { getDatabase, ref, set , push,  } from "firebase/database";
+import { getDatabase, ref, set, push } from "firebase/database";
 import { GrAddCircle } from "react-icons/gr";
 import PhotoUpload from "../../components/PhotoUpload";
 import { useDispatch, useSelector } from "react-redux";
