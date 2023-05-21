@@ -41,10 +41,10 @@ const Post = ({ post }) => {
     if (snapshot.exists()) {
       const data = snapshot.val();
       setReactions(Object.values(data));
-      const isSameEmail = Object.values(data).filter(
-        (reaction) => reaction.email === userSelector.email
+      const isSameUid = Object.values(data).filter(
+        (reaction) => reaction.uid === userSelector.uid
       );
-      setReactionStatus(isSameEmail[0]?.status);
+      setReactionStatus(isSameUid[0]?.status);
       setLikeReactionCount(
         Object.values(data).filter((reaction) => reaction.status === 1).length
       );
@@ -71,12 +71,12 @@ const Post = ({ post }) => {
 
   const handleGiveReaction = (post, status) => {
     const isSameEmail = reactions.filter(
-      (reaction) => reaction.email === userSelector.email
+      (reaction) => reaction.userUid === userSelector.uid
     );
 
     const isSameStatus = reactions.filter(
       (reaction) =>
-        reaction.status == status && reaction.email === userSelector.email
+        reaction.status == status && reaction.userUid === userSelector.uid
     );
 
     if (isSameStatus.length > 0) {
@@ -138,7 +138,7 @@ const Post = ({ post }) => {
   }, [setReactions]);
 
   return (
-    <div className=" my-3 w-[50%] mx-auto text-slate-700 ">
+    <div className=" my-3 mx-auto text-slate-700 ">
       <div className=" flex justify-between items-center ">
         <div className=" mb-2 flex justify-center items-center gap-1 ">
           <img

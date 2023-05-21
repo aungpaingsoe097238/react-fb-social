@@ -1,31 +1,20 @@
 import React, { useEffect, useState } from "react";
 import PhotoUpload from "../../components/PhotoUpload";
-import app from "../../firebase";
-import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { addPhotos } from "../../features/services/photoSlice";
-import {
-  getDatabase,
-  ref,
-  set,
-  child,
-  push,
-  update,
-  get
-} from "firebase/database";
-import Loading from "../../components/Loading";
+import { addFirebase } from "../../features/services/firebaseSlice";
+import Swal from "sweetalert2";
 
 const Edit = () => {
-  const params = useParams();
   const postSelector = useSelector((state) => state?.post?.post);
   const photoSelector = useSelector((state) => state?.photo?.photoUrls);
+  const firebaseSelector = useSelector((state) => state?.firebase);
   const [post, setPost] = useState("");
   const [text, setText] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const database = getDatabase(app);
   const [spinner, setSpinner] = useState(true);
 
   const getCurrentPost = () => {
@@ -52,7 +41,7 @@ const Edit = () => {
 
   const handlePostUpdate = (e) => {
     e.preventDefault();
-    const editPost = {
+    const data = {
       id: post?.id,
       text: text,
       timestamp: post?.timestamp,
@@ -61,15 +50,34 @@ const Edit = () => {
       photos: photoSelector,
       comments: post?.comments,
     };
+    dispatch(addFirebase({ data, path: `posts/${post.id}` }));
+    if (firebaseSelector.status == 1) {
+      setText("");
+      dispatch(addPhotos({ photoUrls: [] }));
+      navigate('/');
+      Alert('success','Post Edit Successfully.')
+    } else {
+      Alert('error','Something was wrong.')
+    }
+  };
 
-    set(ref(database, `posts/${post.id}`), editPost)
-      .then(() => {
-        setText("");
-        dispatch(addPhotos({ photoUrls: [] }));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const Alert = (icon, title) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      }
+    });
+
+    Toast.fire({
+      icon: icon,
+      title: title
+    });
   };
 
   return (

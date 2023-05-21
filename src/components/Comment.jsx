@@ -2,35 +2,35 @@ import React, { useEffect, useState } from "react";
 import T from "../assets/demo/download.png";
 import app from "../firebase";
 import { getDatabase, ref, set, get } from "firebase/database";
-import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addFirebase } from "../features/services/firebaseSlice";
 
 const Comment = ({ post }) => {
-  const uuid = uuidv4();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const database = getDatabase(app);
   const userSelector = useSelector((state) => state?.auth?.user);
+  const dispatch = useDispatch();
+  const firebaseSelector = useSelector((state) => state?.firebase);
 
   const handleSendComment = (e) => {
     e.preventDefault();
     const nowInMilliseconds = Date.now();
     const now = new Date();
     const dateTimeString = now.toLocaleString();
-    const newComment = {
+    const data = {
       id: nowInMilliseconds,
       text: comment,
       timestamp: dateTimeString,
       userUid: userSelector.uid,
       email: userSelector.email
     };
-    set(ref(database, `posts/${post?.id}/comments/${nowInMilliseconds}`), newComment)
-      .then(() => {
-        setComment("");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(addFirebase({ data, path: `posts/${post?.id}/comments/${nowInMilliseconds}` }));
+    if (firebaseSelector.status == 1) {
+      setComment("");
+    } else {
+      console.log(error);
+    }
   };
 
   const getAllComments = async () => {

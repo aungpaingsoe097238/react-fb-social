@@ -13,6 +13,9 @@ import app from "./firebase";
 import { getAuth } from "firebase/auth";
 import RouteGuard from "./components/RouteGuard";
 import Cookies from "js-cookie";
+import Profile from "./pages/profile/Profile";
+import { Link } from "react-router-dom";
+import { AiOutlinePlus } from "react-icons/ai";
 
 function App() {
   const auth = getAuth(app);
@@ -26,9 +29,9 @@ function App() {
         setUser(user);
         const userData = {
           email: user.email,
-          uid: user.uid
+          uid: user.uid,
         };
-        Cookies.set('uid', user.uid)
+        Cookies.set("uid", user.uid);
         dispatch(addUser({ user: userData }));
       } else {
         setUser(null);
@@ -40,6 +43,14 @@ function App() {
   return (
     <div className="container mx-auto text-slate-700">
       <NavBar />
+      {user && (
+        <Link to={"/post-create"}>
+          <div className=" fixed bottom-4 end-5 w-[50px] h-[50px] flex justify-center items-center rounded-full shadow-lg bg-sky-500 cursor-pointer hover:bg-sky-400 ">
+            <AiOutlinePlus className=" text-2xl text-white" />
+          </div>
+        </Link>
+      )}
+
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
@@ -71,6 +82,14 @@ function App() {
           element={
             <RouteGuard>
               <PostDetail />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <RouteGuard>
+              <Profile />
             </RouteGuard>
           }
         />

@@ -11,7 +11,6 @@ import {
 } from "firebase/database";
 import Login from "./Login";
 import NavBar from "../components/NavBar";
-import { AiOutlinePlus } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { addUser } from "../features/services/authSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,14 +45,9 @@ const Home = () => {
 
   return (
     <>
-      <div className="w-full lg:w-[80%] mx-auto ">
+      <div className="w-full lg:w-[50%] mx-auto ">
         <PostList />
       </div>
-      <Link to={"/post-create"}>
-        <div className=" fixed bottom-4 end-5 w-[50px] h-[50px] flex justify-center items-center rounded-full shadow-lg bg-sky-500 cursor-pointer hover:bg-sky-400 ">
-          <AiOutlinePlus className=" text-2xl text-white" />
-        </div>
-      </Link>
     </>
   );
 };

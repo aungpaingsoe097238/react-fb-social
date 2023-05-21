@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from "react";
-import app from "../../firebase";
-import { getDatabase, ref, set, push } from "firebase/database";
-import { GrAddCircle } from "react-icons/gr";
 import PhotoUpload from "../../components/PhotoUpload";
 import { useDispatch, useSelector } from "react-redux";
 import photoSlice, { addPhotos } from "../../features/services/photoSlice";
-import Spinner from "../../components/Spinner";
 import Swal from "sweetalert2";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router";
 import { addPost } from "../../features/services/postSlice";
+import { addFirebase } from "../../features/services/firebaseSlice";
 
 const Create = () => {
-  const uuid = uuidv4();
   const navigate = useNavigate();
-  const database = getDatabase(app);
   const [text, setText] = useState("");
   const [spinner, setSpinner] = useState(true);
   const dispatch = useDispatch();
   const photoSelector = useSelector((state) => state?.photo?.photoUrls);
   const userSelector = useSelector((state) => state?.auth?.user);
+  const firebaseSelector = useSelector((state)=>state?.firebase)
 
   useEffect(() => {
     dispatch(addPost({ post: [] }));
@@ -41,7 +36,7 @@ const Create = () => {
     const nowInMilliseconds = Date.now();
     const now = new Date();
     const dateTimeString = now.toLocaleString();
-    const newPost = {
+    const data = {
       id: nowInMilliseconds,
       text: text,
       timestamp: dateTimeString,
@@ -50,18 +45,17 @@ const Create = () => {
       photos: photoSelector,
       comments: "",
     };
-    set(ref(database, `posts/${nowInMilliseconds}`), newPost)
-      .then(() => {
-        setSpinner(false);
-        Alert("success", "New Post Create Successfully!");
-        setText("");
-        dispatch(addPhotos({ photoUrls: [] }));
-        navigate("/");
-      })
-      .catch((error) => {
-        setSpinner(false);
-        Alert("error", "Something Was Wrong!");
-      });
+    dispatch(addFirebase({data, path: `posts/${nowInMilliseconds}` }));
+    if(firebaseSelector.status == 1){
+      setSpinner(false);
+      Alert("success", "New Post Create Successfully!");
+      setText("");
+      dispatch(addPhotos({ photoUrls: [] }));
+      navigate("/");
+    }else{
+      setSpinner(false);
+      Alert("error", "Something Was Wrong!");
+    }
   };
 
   const Alert = (icon, title) => {
