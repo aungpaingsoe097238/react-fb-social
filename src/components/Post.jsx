@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../features/services/postSlice";
 import app from "../firebase";
 import { getDatabase, ref, set, get, remove } from "firebase/database";
+import { addFirebase } from "../features/services/firebaseSlice";
 
 const Post = ({ post }) => {
   const navigate = useNavigate();
@@ -34,6 +35,8 @@ const Post = ({ post }) => {
   const userSelector = useSelector((state) => state?.auth?.user);
   const [likeReactionCount, setLikeReactionCount] = useState(0);
   const [DisLikeReactionCount, setDisLikeReactionCount] = useState(0);
+  const firebaseSelector = useSelector((state) => state?.firebase);
+  const utliSelector = useSelector((state)=>state?.utli)
 
   const getReaction = async () => {
     const commentRef = ref(database, `posts/${post?.id}/reactions`);
@@ -42,7 +45,7 @@ const Post = ({ post }) => {
       const data = snapshot.val();
       setReactions(Object.values(data));
       const isSameUid = Object.values(data).filter(
-        (reaction) => reaction.uid === userSelector.uid
+        (reaction) => reaction.userUid === userSelector.uid
       );
       setReactionStatus(isSameUid[0]?.status);
       setLikeReactionCount(
@@ -85,7 +88,7 @@ const Post = ({ post }) => {
         {
           id: isSameEmail[0]?.id,
           status: 3,
-          timestamp: dateTimeString,
+          timestamp: utliSelector.dateTimeString,
           userUid: userSelector.uid,
           email: userSelector.email
         },
@@ -100,7 +103,7 @@ const Post = ({ post }) => {
         {
           id: isSameEmail[0]?.id,
           status: status,
-          timestamp: dateTimeString,
+          timestamp: utliSelector.dateTimeString,
           userUid: userSelector.uid,
           email: userSelector.email
         },
@@ -112,7 +115,7 @@ const Post = ({ post }) => {
         {
           id: nowInMilliseconds,
           status: status,
-          timestamp: dateTimeString,
+          timestamp: utliSelector.dateTimeString,
           userUid: userSelector.uid,
           email: userSelector.email
         },
@@ -122,14 +125,12 @@ const Post = ({ post }) => {
   };
 
   const sendReactionToFb = (path, data, message) => {
-    set(ref(database, `${path}`), data)
-      .then(() => {
-        console.log(message);
-        getReaction();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(addFirebase({ data, path: `${path}` }));
+    if (firebaseSelector.status == 1) {
+      getReaction();
+    } else {
+      console.log('error');
+    }
   };
 
   useEffect(() => {

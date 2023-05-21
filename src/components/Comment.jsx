@@ -12,16 +12,14 @@ const Comment = ({ post }) => {
   const userSelector = useSelector((state) => state?.auth?.user);
   const dispatch = useDispatch();
   const firebaseSelector = useSelector((state) => state?.firebase);
+  const utliSelector = useSelector((state)=>state?.utli)
 
   const handleSendComment = (e) => {
     e.preventDefault();
-    const nowInMilliseconds = Date.now();
-    const now = new Date();
-    const dateTimeString = now.toLocaleString();
     const data = {
-      id: nowInMilliseconds,
+      id: utliSelector.nowInMilliseconds,
       text: comment,
-      timestamp: dateTimeString,
+      timestamp: utliSelector.dateTimeString,
       userUid: userSelector.uid,
       email: userSelector.email
     };

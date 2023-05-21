@@ -13,6 +13,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const userSelector = useSelector((state)=>state?.auth?.user)
   const firebaseSelector = useSelector((state)=>state?.firebase)
+  const utliSelector = useSelector((state)=>state?.utli)
 
   const handleFileSelectUI = () => {
     document.getElementById("imageUpload").click();
@@ -44,17 +45,14 @@ const Profile = () => {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           if (downloadURL) {
-            const nowInMilliseconds = Date.now();
-            const now = new Date();
-            const dateTimeString = now.toLocaleString();
             const data = {
               email : userSelector.email,
               userUid : userSelector.uid,
               username : '',
               profileImg : downloadURL,
-              timestamp: dateTimeString,
+              timestamp: utliSelector.dateTimeString,
             }
-            dispatch(addFirebase({data, path: `profile/${nowInMilliseconds}` }));
+            dispatch(addFirebase({data, path: `users/${utliSelector.nowInMilliseconds}` }));
             if(firebaseSelector.status == 1){
               console.log("success")
             }

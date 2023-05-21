@@ -15,6 +15,7 @@ const Create = () => {
   const photoSelector = useSelector((state) => state?.photo?.photoUrls);
   const userSelector = useSelector((state) => state?.auth?.user);
   const firebaseSelector = useSelector((state)=>state?.firebase)
+  const utliSelector = useSelector((state)=>state?.utli)
 
   useEffect(() => {
     dispatch(addPost({ post: [] }));
@@ -33,13 +34,10 @@ const Create = () => {
   const handlePostCreate = (e) => {
     setSpinner(true);
     e.preventDefault();
-    const nowInMilliseconds = Date.now();
-    const now = new Date();
-    const dateTimeString = now.toLocaleString();
     const data = {
-      id: nowInMilliseconds,
+      id: utliSelector.nowInMilliseconds,
       text: text,
-      timestamp: dateTimeString,
+      timestamp: utliSelector.dateTimeString,
       userUid: userSelector.uid,
       email: userSelector.email,
       photos: photoSelector,
