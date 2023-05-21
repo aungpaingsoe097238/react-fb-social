@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import Profile from "./pages/profile/Profile";
 import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
+import Register from "./pages/Register";
 
 function App() {
   const auth = getAuth(app);
@@ -42,7 +43,11 @@ function App() {
 
   return (
     <div className="container mx-auto text-slate-700">
-      <NavBar />
+      
+      {
+        userSelector && <NavBar/>
+      }
+
       {user && (
         <Link to={"/post-create"}>
           <div className=" fixed bottom-4 end-5 w-[50px] h-[50px] flex justify-center items-center rounded-full shadow-lg bg-sky-500 cursor-pointer hover:bg-sky-400 ">
@@ -53,6 +58,7 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={

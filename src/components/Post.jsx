@@ -29,9 +29,6 @@ const Post = ({ post }) => {
   const [reactions, setReactions] = useState([]);
   const [reactionStatus, setReactionStatus] = useState(0);
   const database = getDatabase(app);
-  const nowInMilliseconds = Date.now();
-  const now = new Date();
-  const dateTimeString = now.toLocaleString();
   const userSelector = useSelector((state) => state?.auth?.user);
   const [likeReactionCount, setLikeReactionCount] = useState(0);
   const [DisLikeReactionCount, setDisLikeReactionCount] = useState(0);
@@ -111,9 +108,9 @@ const Post = ({ post }) => {
       );
     } else {
       sendReactionToFb(
-        `posts/${post?.id}/reactions/${nowInMilliseconds}`,
+        `posts/${post?.id}/reactions/${utliSelector.nowInMilliseconds}`,
         {
-          id: nowInMilliseconds,
+          id: utliSelector.nowInMilliseconds,
           status: status,
           timestamp: utliSelector.dateTimeString,
           userUid: userSelector.uid,

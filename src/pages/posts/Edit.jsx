@@ -54,7 +54,7 @@ const Edit = () => {
     if (firebaseSelector.status == 1) {
       setText("");
       dispatch(addPhotos({ photoUrls: [] }));
-      navigate('/');
+      navigate(`/`);
       Alert('success','Post Edit Successfully.')
     } else {
       Alert('error','Something was wrong.')

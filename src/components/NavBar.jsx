@@ -6,10 +6,12 @@ import { getAuth, signOut } from "firebase/auth";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import t from "../assets/demo/images (2).png";
+import { useDispatch, useSelector } from "react-redux";
 
 const NavBar = () => {
   const auth = getAuth(app);
   const navigate = useNavigate();
+  const userSelector = useSelector((state) => state?.auth?.user);
 
   const handleLogout = async () => {
     try {
@@ -30,18 +32,20 @@ const NavBar = () => {
           </li>
         </ul>
         <ul className="flex gap-2 justify-center items-center">
-          <li>
-            <Link to={"/profile"}>
-              <div className=" flex justify-center items-center gap-2 cursor-pointer ">
-                <span className=" text-sm font-bold ">Aung Paing Soe</span>
-                <img
-                  src={t}
-                  className=" w-[35px] h-[35px] object-cover rounded-full  "
-                  alt=""
-                />
-              </div>
-            </Link>
-          </li>
+          {userSelector && (
+            <li>
+              <Link to={"/profile"}>
+                <div className=" flex justify-center items-center gap-2 cursor-pointer ">
+                  <span className=" text-sm font-bold ">Aung Paing Soe</span>
+                  <img
+                    src={t}
+                    className=" w-[35px] h-[35px] object-cover rounded-full  "
+                    alt=""
+                  />
+                </div>
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </div>

@@ -19,7 +19,6 @@ import { addPost } from "../../features/services/postSlice";
 
 const Detail = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const params = useParams();
   const navigate = useNavigate();
   const postSelector = useSelector((state) => state?.post?.post);
   const [post, setPost] = useState("");
