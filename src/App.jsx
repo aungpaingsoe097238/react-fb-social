@@ -17,6 +17,7 @@ import Profile from "./pages/profile/Profile";
 import { Link } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 import Register from "./pages/Register";
+import ProfileEdit from "./pages/profile/Edit";
 
 function App() {
   const auth = getAuth(app);
@@ -43,10 +44,7 @@ function App() {
 
   return (
     <div className="container mx-auto text-slate-700">
-      
-      {
-        userSelector && <NavBar/>
-      }
+      {userSelector && <NavBar />}
 
       {user && (
         <Link to={"/post-create"}>
@@ -55,7 +53,6 @@ function App() {
           </div>
         </Link>
       )}
-
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -96,6 +93,14 @@ function App() {
           element={
             <RouteGuard>
               <Profile />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/profile-edit"
+          element={
+            <RouteGuard>
+              <ProfileEdit />
             </RouteGuard>
           }
         />

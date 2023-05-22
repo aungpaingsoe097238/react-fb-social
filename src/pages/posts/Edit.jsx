@@ -82,9 +82,9 @@ const Edit = () => {
 
   return (
     <div>
-      <div className="w-full text-slate-700 lg:w-[50%] mx-auto">
-        <div className=" my-2 ">Edit a Post</div>
+      <div className=" h-screen flex justify-center items-center w-full lg:w-[50%] mx-auto">
         <form onSubmit={handlePostUpdate}>
+         <div className=" my-5 font-medium text-center ">Edit a Post</div>
           <textarea
             rows="5"
             placeholder=" type here ... "

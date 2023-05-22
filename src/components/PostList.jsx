@@ -39,7 +39,7 @@ const PostList = ({ page }) => {
   }, [isLoading]);
 
   return (
-    <div>
+    <div className=" mt-[55px]">
       {isLoading ? (
         <>
           <Loading />

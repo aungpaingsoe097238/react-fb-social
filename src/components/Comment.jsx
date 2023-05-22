@@ -51,9 +51,10 @@ const Comment = ({ post }) => {
       <form className="flex" onSubmit={handleSendComment}>
         <input
           type="text"
-          className=" border border-slate-200 w-full rounded-sm p-2 "
+          className="input-text "
           placeholder="type comment here..."
           value={comment}
+          required
           onChange={(e) => setComment(e.target.value)}
         />
         <button className=" primary-btn">send</button>

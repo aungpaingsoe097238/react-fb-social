@@ -36,15 +36,15 @@ const Detail = () => {
 
   const handleGoEdit = (post) => {
     navigate(`/post-edit/${post?.id}`);
-    dispatch(addPost({ post : post }))
-  }
+    dispatch(addPost({ post: post }));
+  };
 
   useEffect(() => {
     getCurrentPost();
   }, []);
 
   return (
-    <div className=" w-[80%] mx-auto">
+    <div className=" w-[80%] mx-auto my-[55px] ">
       {isLoading ? (
         <>
           <Loading />
@@ -52,51 +52,52 @@ const Detail = () => {
       ) : (
         <>
           {/* post detail */}
-          <div className=" my-10 flex gap-3 ">
-            <div className="w-[70%]">
-              <Swiper
-                slidesPerView={1}
-                pagination={{
-                  type: "fraction"
-                }}
-                navigation={true}
-                modules={[Navigation, Pagination]}
-                className="mySwiper"
-              >
-                {post?.photos?.map((photo, index) => {
-                  return (
-                    <SwiperSlide key={index}>
-                      <img
-                        src={photo}
-                        className="  h-[500px] object-cover mx-auto "
-                        alt=""
-                      />
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            </div>
-            <div className="w-[30%] flex gap-3 flex-col">
-              <div className=" flex items-center justify-between ">
-                <div className=" flex gap-2 items-center">
-                  <img
-                    src={post?.photos[0]}
-                    className=" w-[40px] h-[40px] rounded-full border border-slate-100 shadow-sm object-cover "
-                    alt=""
-                  />
-                  <div className=" flex flex-col ">
-                    <div className=" text-sm font-bold">{post.email}</div>
-                    <div className=" text-xs">{post.timestamp}</div>
-                  </div>
+          <div className="">
+            <Swiper
+              slidesPerView={1}
+              pagination={{
+                type: "fraction",
+              }}
+              navigation={true}
+              modules={[Navigation, Pagination]}
+              className="mySwiper"
+            >
+              {post?.photos?.map((photo, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <img
+                      src={photo}
+                      className=" w-full h-[500px] object-cover mx-auto "
+                      alt=""
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+          <div className=" flex gap-3 flex-col mt-5">
+            <div className=" flex items-center justify-between ">
+              <div className=" flex gap-2 items-center">
+                <img
+                  src={post?.photos[0]}
+                  className=" w-[40px] h-[40px] rounded-full border border-slate-100 shadow-sm object-cover "
+                  alt=""
+                />
+                <div className=" flex flex-col ">
+                  <div className=" text-sm font-bold">{post.email}</div>
+                  <div className=" text-xs">{post.timestamp}</div>
                 </div>
-                  <div className=" p-2 active:bg-sky-100 rounded-full" onClick={ () => handleGoEdit(post) }>
-                    <FaRegEdit className=" text-2xl cursor-pointer " />
-                  </div>
               </div>
-              <div>{post?.text}</div>
-              <div>
-                <Comment post={post} />
+              <div
+                className=" p-2 active:bg-sky-100 rounded-full"
+                onClick={() => handleGoEdit(post)}
+              >
+                <FaRegEdit className=" text-2xl cursor-pointer " />
               </div>
+            </div>
+            <div>{post?.text}</div>
+            <div>
+              <Comment post={post} />
             </div>
           </div>
           {/* end post detail */}
